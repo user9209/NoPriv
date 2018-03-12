@@ -57,10 +57,21 @@ if found == False:
         ("\n".join(config_file_paths), )
     raise Exception(message)
 
+imap_password = config.get('nopriv', 'imap_password')
+
+passwordCryptedLogin = input("Enter your password to encrypt your password:")
+
+bashCommand = 'linuxconsolestringcryptor d ' + str(passwordCryptedLogin) + ' ' + imap_password
+import subprocess
+process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+output, error = process.communicate()
+
+if len(output) == 0:
+    sys.exit(0)
 
 IMAPSERVER = config.get('nopriv', 'imap_server')
 IMAPLOGIN = config.get('nopriv', 'imap_user')
-IMAPPASSWORD = config.get('nopriv', 'imap_password')
+IMAPPASSWORD = output.decode('UTF-8')
 
 if IMAPPASSWORD == "":
     IMAPPASSWORD = getpass.getpass()
